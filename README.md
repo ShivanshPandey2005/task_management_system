@@ -1,7 +1,11 @@
 # <img src="frontend/public/favicon.svg" width="28" align="center" alt="" /> Parallel
 
 Full-stack task manager: **React + TypeScript (Vite, Tailwind)** frontend and **FastAPI** backend.
-Tasks live in **backend memory by default** (as the assignment requires; data resets on restart). Set `DATABASE_URL` and the same API stores them in **PostgreSQL** instead. The Docker setup does exactly that.
+
+- **Live Demo:** https://task-management-system-pied-mu.vercel.app/
+- **API:** https://task-management-system-gf7x.onrender.com
+
+Tasks are kept in memory.
 
 | | |
 |---|---|
@@ -21,17 +25,17 @@ Tasks live in **backend memory by default** (as the assignment requires; data re
 - Responsive: sidebar becomes a slide-over on mobile
 
 ## Requirements
-Python 3.10+ and Node 20+.
+Python 3.11+ and Node 20+.
 
 ## Run it
 
-**Everything in Docker (with PostgreSQL)**
+**Everything in Docker**
 ```bash
 docker compose up --build
 ```
-App on http://localhost:8080 (nginx serves the React build and proxies `/api`), API on http://localhost:8000/docs, Postgres 16 with a persistent volume. `docker compose down -v` wipes the data.
+App on http://localhost:8080 (nginx serves the React build and proxies `/api`), API on http://localhost:8000/docs.
 
-**Local dev (in-memory, no database needed)**
+**Local dev**
 
 **Backend** (http://localhost:8000, Swagger UI at `/docs`)
 ```bash
@@ -53,16 +57,14 @@ In dev, Vite proxies `/api` to the backend, so no CORS setup is needed. For a pr
 
 **Tests**
 ```bash
-cd backend && pytest                       # memory + SQLite
-TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/tasks_test pytest   # also runs against Postgres
+cd backend && pytest
 cd frontend && npm run build   # type-checks and builds
 ```
 
 ## Environment variables
 | File | Variable | Default | Purpose |
 |---|---|---|---|
-| `backend/.env` | `DATABASE_URL` | *(empty)* | `postgresql://user:pass@host:5432/db`. Empty = in-memory. Tables are created automatically; sample tasks are seeded only into an empty table |
-| | `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173` | Comma-separated allowed origins |
+| `backend/.env` | `CORS_ORIGINS` | `http://localhost:5173,http://127.0.0.1:5173` | Comma-separated allowed origins |
 | | `SEED_DATA` | `true` | Seed sample tasks on startup |
 | | `API_PREFIX` | `/api` | URL prefix for the API routes |
 | `frontend/.env` | `VITE_API_URL` | *(empty)* | Backend origin; empty = use the dev proxy |
@@ -109,10 +111,11 @@ Codes: `validation_error` (400), `not_found` (404), `internal_error` (500).
 
 ## Deploy
 
-Vercel hosts the frontend; it can't run the Docker image or keep in-memory state across serverless calls, so the API runs as a container elsewhere (any Docker host) with Postgres.
+- **Live Demo:** https://task-management-system-pied-mu.vercel.app/
+- **API:** https://task-management-system-gf7x.onrender.com
 
-1. **API + database** (Render, Railway, Fly, a VPS...): deploy `backend/Dockerfile` and set `DATABASE_URL` and `CORS_ORIGINS=https://<your-app>.vercel.app`. The container listens on `$PORT` (default 8000) and exposes `/health`. [`render.yaml`](render.yaml) is a Render blueprint for the API + a Postgres database (not verified on a live account).
-2. **Frontend on Vercel**: import the repo, set **Root Directory** to `frontend`, and add the env var `VITE_API_URL=https://<your-api-host>`. [`frontend/vercel.json`](frontend/vercel.json) handles the SPA rewrite.
+1. **API** (Render): deploy `backend/Dockerfile` and set `CORS_ORIGINS=https://task-management-system-pied-mu.vercel.app/`. The container listens on `$PORT` (default 8000) and exposes `/health`.
+2. **Frontend on Vercel**: import the repo, set **Root Directory** to `frontend`, and add the env var `VITE_API_URL=https://task-management-system-gf7x.onrender.com`. [`frontend/vercel.json`](frontend/vercel.json) handles the SPA rewrite.
 
 ## Structure
 ```
@@ -122,7 +125,7 @@ backend/app
 ├── routes/task_routes.py    HTTP routing only
 ├── controllers/             404 mapping, response shaping
 ├── services/                task_service.py (business rules), seed_data.py
-├── repositories/            memory.py (default) and sql.py (Postgres) behind one interface
+├── repositories/            memory.py and sql.py behind one interface
 ├── schemas/task.py          Pydantic models (camelCase aliases)
 └── middleware/error_handler.py  centralized error handling
 frontend/src
