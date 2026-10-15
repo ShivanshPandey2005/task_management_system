@@ -28,14 +28,14 @@ export function FilterBar({ query, onChange, onClear, hasFilters }: Props) {
   const sortLabel = SORT_OPTIONS.find((o) => o.value === sortValue)?.label
 
   return (
-    <div className="flex h-11 shrink-0 items-center gap-2 overflow-x-auto border-b border-line px-4 md:px-6">
+    <div className="flex h-11 shrink-0 items-center gap-2 overflow-x-auto border-b border-line px-4 md:px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <SelectMenu<TaskStatus | ''>
         value={query.status}
         options={withAny('Any status', STATUS_OPTIONS)}
         onChange={(status) => onChange({ status })}
         ariaLabel="Filter by status"
         buttonClassName={`chip ${query.status ? 'chip-active' : ''}`}
-        button={<>{query.status ? `Status: ${STATUS_LABEL[query.status]}` : 'Status'}<ChevronDownIcon size={12} /></>}
+        button={<>{query.status ? `Status: ${STATUS_LABEL[query.status]}` : 'Status'}<ChevronDownIcon size={12} className="shrink-0" /></>}
       />
       <SelectMenu<TaskPriority | ''>
         value={query.priority}
@@ -43,22 +43,22 @@ export function FilterBar({ query, onChange, onClear, hasFilters }: Props) {
         onChange={(priority) => onChange({ priority })}
         ariaLabel="Filter by priority"
         buttonClassName={`chip ${query.priority ? 'chip-active' : ''}`}
-        button={<>{query.priority ? `Priority: ${PRIORITY_LABEL[query.priority]}` : 'Priority'}<ChevronDownIcon size={12} /></>}
+        button={<>{query.priority ? `Priority: ${PRIORITY_LABEL[query.priority]}` : 'Priority'}<ChevronDownIcon size={12} className="shrink-0" /></>}
       />
       <button
         className={`chip ${query.overdue ? 'border-danger/50 bg-danger/10 !text-danger' : ''}`}
         aria-pressed={query.overdue}
         onClick={() => onChange({ overdue: !query.overdue })}
       >
-        <CalendarXIcon size={13} /> Overdue
+        <CalendarXIcon size={13} className="shrink-0" /> Overdue
       </button>
       {hasFilters && (
-        <button className="btn btn-ghost h-7 px-2 text-xs" onClick={onClear}>
-          <XIcon size={12} /> Clear
+        <button className="btn btn-ghost h-7 shrink-0 px-2 text-xs" onClick={onClear}>
+          <XIcon size={12} className="shrink-0" /> Clear
         </button>
       )}
 
-      <div className="ml-auto">
+      <div className="ml-auto shrink-0 pl-2">
         <SelectMenu<string>
           value={sortValue}
           options={SORT_OPTIONS}
@@ -69,7 +69,7 @@ export function FilterBar({ query, onChange, onClear, hasFilters }: Props) {
           ariaLabel="Sort tasks"
           align="right"
           buttonClassName="chip"
-          button={<><SortIcon size={13} />{sortLabel}</>}
+          button={<><SortIcon size={13} className="shrink-0" /><span>{sortLabel}</span></>}
         />
       </div>
     </div>

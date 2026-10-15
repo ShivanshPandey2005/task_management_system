@@ -87,11 +87,11 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.5; cursor: po
     @apply inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted transition-colors hover:bg-active hover:text-fg focus-visible:outline-2 focus-visible:outline-accent;
   }
   .chip {
-    @apply inline-flex h-7 cursor-pointer items-center gap-1.5 rounded-md border border-line-strong px-2 text-xs font-medium text-muted transition-colors hover:bg-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent;
+    @apply inline-flex h-7 shrink-0 cursor-pointer items-center gap-1.5 rounded-md border border-line-strong px-2 text-xs font-medium whitespace-nowrap text-muted transition-colors hover:bg-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-accent;
   }
   .chip-active { @apply border-accent/50 bg-accent/10 text-fg; }
   .prop-btn {
-    @apply -ml-2 inline-flex h-7 cursor-pointer items-center gap-2 rounded-md px-2 text-fg transition-colors hover:bg-hover focus-visible:outline-2 focus-visible:outline-accent;
+    @apply -ml-2 inline-flex h-7 shrink-0 cursor-pointer items-center gap-2 rounded-md px-2 text-fg whitespace-nowrap transition-colors hover:bg-hover focus-visible:outline-2 focus-visible:outline-accent;
   }
   .kbd {
     @apply inline-flex h-4 min-w-4 items-center justify-center rounded border border-line-strong px-1 text-[10px] font-medium text-subtle;
