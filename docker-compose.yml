@@ -1,0 +1,41 @@
+name: parallel
+# Whole stack with PostgreSQL:  docker compose up --build
+#   web  -> http://localhost:8080   (React build served by nginx, proxies /api to the API)
+#   api  -> http://localhost:8000   (FastAPI; Swagger at /docs)
+#   db   -> PostgreSQL 16 with a persistent volume
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tasks
+      POSTGRES_PASSWORD: tasks
+      POSTGRES_DB: tasks
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tasks -d tasks"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://tasks:tasks@db:5432/tasks
+      CORS_ORIGINS: http://localhost:8080,http://localhost:5173
+      SEED_DATA: "true"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
